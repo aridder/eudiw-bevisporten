@@ -28,5 +28,4 @@ jobs:
       packages: read
       pull-requests: write
     uses: felleslosninger/github-workflows/.github/workflows/ci-pr-checks-lib.yml@main
-    with:
     secrets: inherit
