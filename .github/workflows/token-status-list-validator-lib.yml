@@ -29,5 +29,5 @@ jobs:
       pull-requests: write
     uses: felleslosninger/github-workflows/.github/workflows/ci-pr-checks-lib.yml@main
     with:
-      application-path: libs/token-status-list-validator-lib
+      application-path: libs/token-status-list-validator-lib/
     secrets: inherit
