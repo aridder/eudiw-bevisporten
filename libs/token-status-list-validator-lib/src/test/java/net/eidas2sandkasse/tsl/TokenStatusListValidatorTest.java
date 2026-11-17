@@ -7,7 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("Token Status List Validator")
-class TokenStatusListValidatorTest {
+public class TokenStatusListValidatorTest {
+
+    public TokenStatusListValidatorTest() {
+    }
 
     @Test
     @DisplayName("When validate is called with any input, then true is expected")
