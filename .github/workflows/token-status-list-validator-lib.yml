@@ -1,0 +1,32 @@
+name: token-status-list-validator-lib
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'libs/token-status-list-validator-lib/**'
+      - '.github/workflows/token-status-list-validator-lib.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'libs/token-status-list-validator-lib/**'
+      - '.github/workflows/token-status-list-validator-lib.yml'
+      - '!libs/token-status-list-validator-lib/src/test/**'
+      - '!libs/token-status-list-validator-lib/*.md'
+  workflow_dispatch:
+
+jobs:
+  pull-request-checks:
+    if: github.event_name == 'pull_request'
+    permissions:
+      # ci-pr-checks-image.yml's nested call-auto-merge job declares
+      # contents: write unconditionally (even though it's disabled for us via
+      # enable-auto-merge-dependabot defaulting to false) - GitHub validates
+      # that declared permission against this job's grant for the whole
+      # workflow file, so contents: read here breaks the file on push to main.
+      contents: write
+      packages: read
+      pull-requests: write
+    uses: felleslosninger/github-workflows/.github/workflows/ci-pr-checks-lib.yml@main
+    with:
+    secrets: inherit
