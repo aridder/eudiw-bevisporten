@@ -276,6 +276,32 @@ updates:
           - "*"
 
   # ============================================================
+  # token-status-list-validator-lib
+  # ============================================================
+  - package-ecosystem: maven
+    directory: /libs/token-status-list-validator-lib
+    registries:
+      - maven-github
+    schedule:
+      interval: weekly
+      day: sunday
+    open-pull-requests-limit: 25
+    labels:
+      - dependencies
+      - token-status-list-validator-lib
+    groups:
+      maven:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "org.springframework.boot:spring-boot-starter-parent"
+      security:
+        applies-to: security-updates
+        patterns:
+          - "*"
+
+  # ============================================================
   # GitHub Actions
   # ============================================================
   - package-ecosystem: github-actions
