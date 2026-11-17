@@ -19,7 +19,6 @@ jobs:
   pull-request-checks:
     if: github.event_name == 'pull_request'
     permissions:
-      # ci-pr-checks-image.yml's nested call-auto-merge job declares
       # contents: write unconditionally (even though it's disabled for us via
       # enable-auto-merge-dependabot defaulting to false) - GitHub validates
       # that declared permission against this job's grant for the whole
