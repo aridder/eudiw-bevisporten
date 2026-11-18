@@ -23,43 +23,37 @@ class TokenStatusListValidatorTest {
     @Test
     @DisplayName("and the JWT status at idx is 0 then true is expected")
     void jwtStatusZeroIsValid() {
-        var endpoint = new MockStatusListEndpoint().serve(UA_URI, JWT, statusList("ua-pid-mdoc.jwt"));
+        var endpoint = new MockStatusListEndpoint().serve(PT_URI, JWT, statusList("pt-pid-mdoc.jwt"));
 
-        assertTrue(validator(endpoint, UA_ISSUED_AT.plus(AFTER_ISSUANCE)).validate(UA_URI, UA_IDX_VALID));
+        assertTrue(validator(endpoint, PT_ISSUED_AT.plus(AFTER_ISSUANCE)).validate(PT_URI, PT_IDX_VALID));
     }
 
     @Test
     @DisplayName("and the JWT status at idx is 1 then false is expected")
     void jwtStatusOneIsNotValid() {
-        var endpoint = new MockStatusListEndpoint().serve(UA_URI, JWT, statusList("ua-pid-mdoc.jwt"));
+        var endpoint = new MockStatusListEndpoint().serve(PT_URI, JWT, statusList("pt-pid-mdoc.jwt"));
 
-        assertFalse(validator(endpoint, UA_ISSUED_AT.plus(AFTER_ISSUANCE)).validate(UA_URI, UA_IDX_REVOKED));
+        assertFalse(validator(endpoint, PT_ISSUED_AT.plus(AFTER_ISSUANCE)).validate(PT_URI, PT_IDX_REVOKED));
     }
 
     @Test
     @DisplayName("and the CWT has x5chain in the protected header then the status is resolved")
     void cwtWithProtectedX5Chain() {
         var endpoint = new MockStatusListEndpoint().serve(PT_URI, CWT, statusList("pt-pid-mdoc.cwt"));
+        var validator = validator(endpoint, PT_ISSUED_AT.plus(AFTER_ISSUANCE));
 
-        assertTrue(validator(endpoint, PT_ISSUED_AT.plus(AFTER_ISSUANCE)).validate(PT_URI, PT_IDX_VALID));
+        assertTrue(validator.validate(PT_URI, PT_IDX_VALID));
+        assertFalse(validator.validate(PT_URI, PT_IDX_REVOKED));
     }
 
     @Test
-    @DisplayName("and the Diia CWT has x5chain in the unprotected header then the status is resolved")
-    void diiaCwtWithUnprotectedX5Chain() {
+    @DisplayName("and the CWT has x5chain in the unprotected header then the status is resolved")
+    void cwtWithUnprotectedX5Chain() {
         var endpoint = new MockStatusListEndpoint().serve(UA_URI, CWT, statusList("ua-pid-mdoc.cwt"));
         var validator = validator(endpoint, UA_ISSUED_AT.plus(AFTER_ISSUANCE));
 
         assertTrue(validator.validate(UA_URI, UA_IDX_VALID));
         assertFalse(validator.validate(UA_URI, UA_IDX_REVOKED));
-    }
-
-    @Test
-    @DisplayName("and the A-SIT CWT has x5chain in the unprotected header then the status is resolved")
-    void asitCwtWithUnprotectedX5Chain() {
-        var endpoint = new MockStatusListEndpoint().serve(AT_URI, CWT, statusList("at-pid-mdoc.cwt"));
-
-        assertTrue(validator(endpoint, AT_ISSUED_AT.plus(AFTER_ISSUANCE)).validate(AT_URI, AT_IDX_VALID));
     }
 
     @Test
