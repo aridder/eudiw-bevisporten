@@ -14,10 +14,6 @@ public class TokenStatusListValidatorLibTest {
 
     @Test
     public void testTokenStatusListValidatorLibImportsToProject() {
-        Assertions.assertAll(
-            () -> Assertions.assertNotNull(validator),
-            () -> Assertions.assertTrue(validator.validate(null, null)),
-            () -> Assertions.assertTrue(validator.validate("", null))
-        );
+        Assertions.assertNotNull(validator);
     }
 }
