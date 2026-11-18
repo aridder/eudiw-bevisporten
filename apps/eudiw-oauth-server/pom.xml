@@ -157,5 +157,10 @@
             <name>GitHub felleslosninger Apache Maven Packages</name>
             <url>https://maven.pkg.github.com/felleslosninger/.github</url>
         </repository>
+        <repository>
+            <id>github-eudi-wallet-no</id>
+            <name>GitHub felleslosninger Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/eudi-wallet-no/.github</url>
+        </repository>
     </repositories>
 </project>
