@@ -163,5 +163,10 @@
             <name>walt.id Release Repository</name>
             <url>https://maven.waltid.dev/releases</url>
         </repository>
+        <repository>
+            <id>waltid-repository-snapshots</id>
+            <name>walt.id Snapshot Repository</name>
+            <url>https://maven.waltid.dev/snapshots</url>
+        </repository>
     </repositories>
 </project>
