@@ -159,8 +159,8 @@
         </repository>
         <repository>
             <id>github-eudi-wallet-no</id>
-            <name>GitHub felleslosninger Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/eudi-wallet-no/.github</url>
+            <name>Bevisporten Maven Packages</name>
+            <url>https://maven.pkg.github.com/eudi-wallet-no/eudiw-bevisporten</url>
         </repository>
     </repositories>
 </project>
