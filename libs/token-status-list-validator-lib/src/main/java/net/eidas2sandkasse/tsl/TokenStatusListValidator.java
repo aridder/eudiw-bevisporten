@@ -2,6 +2,8 @@ package net.eidas2sandkasse.tsl;
 
 import io.ktor.client.engine.HttpClientEngine;
 import net.eidas2sandkasse.tsl.walt.WaltStatusListClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Clock;
 
@@ -10,6 +12,8 @@ import java.time.Clock;
  * Status 0 (VALID) gives true, every other status gives false.
  */
 public class TokenStatusListValidator {
+
+    private static final Logger log = LoggerFactory.getLogger(TokenStatusListValidator.class);
 
     private final WaltStatusListClient client;
 
@@ -46,6 +50,7 @@ public class TokenStatusListValidator {
         try {
             return client.resolveStatus(uri, index.intValue()) == 0;
         } catch (Exception e) {
+            log.warn("Status list {} could not be resolved for idx {}", uri, index);
             throw new TokenStatusListException("Could not resolve token status list status", e);
         }
     }

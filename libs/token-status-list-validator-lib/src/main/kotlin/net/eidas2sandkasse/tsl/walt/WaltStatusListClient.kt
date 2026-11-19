@@ -20,6 +20,9 @@ import id.walt.policies2.vc.policies.status.signature.SignatureInvalidException
 import id.walt.policies2.vc.policies.status.signature.StatusListSignatureVerifier
 import id.walt.statuslist.codec.TokenStatusListCodec
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.api.createClientPlugin
+import io.ktor.http.contentType
+import io.ktor.http.isSuccess
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.java.Java
 import io.ktor.client.plugins.HttpTimeout
@@ -33,6 +36,21 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.longOrNull
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.time.Instant
+import org.slf4j.LoggerFactory
+
+private val log = LoggerFactory.getLogger(WaltStatusListClient::class.java)
+
+// Logs every status list actually downloaded. A list served from walt.id's cache is not logged here.
+private val StatusListLoadLogging = createClientPlugin("StatusListLoadLogging") {
+    onResponse { response ->
+        val uri = response.call.request.url
+        if (response.status.isSuccess()) {
+            log.info("Status list {} loaded. Format: {}. Response: {}.", uri, response.contentType(), response.status)
+        } else {
+            log.warn("Status list {} could not be loaded. Response: {}.", uri, response.status)
+        }
+    }
+}
 
 /**
  * Blocking bridge to walt.id for the Java code: walt.id's fetcher, verifier and readers are suspend functions
@@ -54,6 +72,7 @@ internal class WaltStatusListClient @JvmOverloads constructor(
             this.connectTimeoutMillis = connectTimeoutMillis
             this.requestTimeoutMillis = requestTimeoutMillis
         }
+        install(StatusListLoadLogging)
     }
 
     // KONFIGURASJON: caching. walt.id's CredentialFetcher keeps an in-memory cache of at most
@@ -93,12 +112,16 @@ internal class WaltStatusListClient @JvmOverloads constructor(
         require(exp == null || exp > now().epochSeconds) { "Status list token from '$uri' is expired" }
 
         val statuses = TokenStatusListCodec.decode(statusList.list)
-        TokenStatusListCodec.readStatus(decoded = statuses, index = index, bits = statusList.size).toInt()
+        val status = TokenStatusListCodec.readStatus(decoded = statuses, index = index, bits = statusList.size).toInt()
+        log.debug("Status list {} has status {} at idx {}.", uri, status, index)
+        status
     }
 
     private suspend fun verifyCwt(cwt: ByteArray): ByteArray =
         signatureVerifier.verifyCwt(cwt).recoverCatching { e ->
-            if (e is KeyResolutionFailedException) verifyCwtWithUnprotectedX5Chain(cwt) else throw e
+            if (e !is KeyResolutionFailedException) throw e
+            log.debug("walt.id found no key in the protected CWT header, trying x5chain in the unprotected header")
+            verifyCwtWithUnprotectedX5Chain(cwt)
         }.getOrThrow()
 
     // walt.id only resolves x5chain from the protected header, RFC 9360 allows it in the unprotected one too.
