@@ -57,7 +57,7 @@ public class TokenStatusListValidator {
     }
 
     public boolean validIdx(long index) {
-        if (index < 0 || index > Long.MAX_VALUE) {
+        if (index < 0 || index > Integer.MAX_VALUE) {
             throw new IllegalArgumentException("Status list index is invalid");
         }
         return true;
