@@ -5,6 +5,7 @@ import net.eidas2sandkasse.tsl.walt.WaltStatusListClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
 import java.time.Clock;
 
 /**
@@ -43,15 +44,32 @@ public class TokenStatusListValidator {
      *
      * @throws TokenStatusListException if the status could not be determined
      */
-    public boolean validate(String uri, Long index) {
-        if (uri == null || uri.isBlank() || index == null || index < 0 || index > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException("Status list uri and a non-negative int index are required");
+    public boolean validate(URI uri, long index) {
+        if (!validUri(uri)  || !validIdx(index)) {
+            throw new IllegalArgumentException("Status list uri and a non-negative index are required");
         }
         try {
-            return client.resolveStatus(uri, index.intValue()) == 0;
+            return client.resolveStatus(uri.toString(), (int) index) == 0;
         } catch (Exception e) {
             log.warn("Status list {} could not be resolved for idx {}", uri, index);
             throw new TokenStatusListException("Could not resolve token status list status", e);
         }
+    }
+
+    public boolean validIdx(long index) {
+        if (index < 0 || index > Long.MAX_VALUE) {
+            throw new IllegalArgumentException("Status list index is invalid");
+        }
+        return true;
+    }
+
+    public boolean validUri(URI uri) {
+        if (uri == null ) {
+            throw new IllegalArgumentException("Status list uri is null");
+        }
+        if(!uri.getScheme().equals("https")){
+            throw new IllegalArgumentException("Status list uri must be https");
+        }
+       return true;
     }
 }
