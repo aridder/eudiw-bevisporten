@@ -67,7 +67,7 @@ public class TokenStatusListValidator {
         if (uri == null ) {
             throw new IllegalArgumentException("Status list uri is null");
         }
-        if(!uri.getScheme().equals("https")){
+        if (!"https".equalsIgnoreCase(uri.getScheme())) {
             throw new IllegalArgumentException("Status list uri must be https");
         }
        return true;
