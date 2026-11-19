@@ -9,7 +9,6 @@ on:
   release:
     types:
       - created
-      - published
 
 jobs:
   pull-request-checks:
